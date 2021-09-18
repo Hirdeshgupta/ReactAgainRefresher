@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 
-const Addform = ({setTasks,isaddform}) => {
+const Addform = ({setTasks,isaddform,tasks}) => {
     const [state,setState]=useState({
         text:"",
         day:"",
@@ -19,21 +19,31 @@ const Addform = ({setTasks,isaddform}) => {
             [e.target.name]:e.target.checked
         })
     }
-    const handleSubmit=(e)=>{
+    const handleSubmit= async (e)=>{
         e.preventDefault();
         if(state.text==""){alert('Please enter the task');return;}
         if(state.day=="") {alert('Please enter the day');return;}
+        // await fetch()
+        const taskupdt ={
+            id:Math.floor(Math.random()*1000+1),
+            ...state
+        }
         if(state.text!="" && state.day!=""){
         setTasks(prev=>(
             [
                 ...prev,
-                {
-                    id:Math.random(100),
-                    ...state
-                }
+                taskupdt
             ]
         ))
         }
+        await fetch("http://localhost:5000/tasks",{
+            method:"POST",
+            headers:
+            {
+                'Content-type':'application/json'
+            },
+            body:JSON.stringify(taskupdt)
+        })
     }
     return (
         <div>

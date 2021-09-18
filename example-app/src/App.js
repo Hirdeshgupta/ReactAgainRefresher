@@ -1,28 +1,39 @@
 import React from 'react'
 import Header from "./Components/Header.js"
 import Tasks from './Components/Tasks.js';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import Addform from './Components/Addform.js';
 function App() {
-  const [tasks,setTasks] = useState([
-    {
-      "id": 1,
-      "text": "Doctors Appointment",
-      "day": "Feb 5th at 2:30pm",
-      "reminder": true
-    },
-    {
-      "id": 2,
-      "text": "Meeting at School",
-      "day": "Feb 6th at 1:30pm",
-      "reminder": true
+  const fetchData = async ()=>{
+    const res = await fetch("http://localhost:5000/tasks");
+    const data = await res.json();
+    return data;
+  }
+  useEffect(()=>{
+    const getTask = async()=>{
+      const data = await fetchData();
+      setTasks(data);
     }
-  ]);
-  const deleteTask=(id)=>{
+    getTask();
+  },[])
+  const [tasks,setTasks] = useState([]);
+  const deleteTask=async (id)=>{
+    await fetch(`http://localhost:5000/tasks/${id}`,{
+      method:"DELETE"
+    })
     setTasks(tasks.filter(t=>t.id!=id));
   }
-  const toggleReminder=(id)=>{
-    setTasks(tasks.map(t=>{if(t.id===id){if(t.reminder)return {...t,reminder:false};else return {...t,reminder:true};} else return t; }));
+  const toggleReminder=async(id)=>{
+    const updtTask=tasks.map(t=>{if(t.id===id){if(t.reminder)return {...t,reminder:false};else return {...t,reminder:true};} else return t; });
+    setTasks(updtTask);
+    await fetch(`http://localhost:5000/tasks/${id}`,{
+      method:"UPDATE",
+      headers:{
+        "Content-type":"application/json"
+      },
+      body:JSON.stringify(updtTask)
+    })
+
   }
   const onClickButton=()=>{
     setAddform(!addForm);

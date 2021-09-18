@@ -1,14 +1,10 @@
 import React from 'react'
-
-// const myStyles={
-//     color:"red",
-//     backgroundColor:"black"
-// }
-const Header= ({tittle})=>{
+const Header= ({tittle,onClickButton,addForm})=>{
     return (
-        <div>
+        <header className="header">
             <h1>{tittle}</h1>
-        </div>
+            <button onClick={onClickButton} className="btn">{addForm ? "Close" : "Add" }</button>
+        </header>
     )
 }
 Header.defaultProps={

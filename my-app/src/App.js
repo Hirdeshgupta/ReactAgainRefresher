@@ -11,31 +11,43 @@ const App =()=>{
     const [rest,setRest]=useState([]);
     const [coords,setCoords]=useState({lat:51.5074,lng:0.1278});
     const [bonds,setBounds]=useState({sw:{lat:0,lng:0},ne:{lat:0,lng:0}});
+    const [childClicked,setChildClicked]=useState(null);
+    const [isLoading,setIsLoading]=useState(false);
+    const [type,setType]=useState("hotels");
+    const [rating,setRating]=useState(0);
+    const [filteredPlaces,setFilteredPlaces]=useState([]);
     useEffect(() => {
         navigator.geolocation.getCurrentPosition( ({ coords: { latitude, longitude } }) => {
             setCoords({lat:latitude,lng:longitude})
         });
       }, []);
+      useEffect(()=>{
+          const filteredarr = rest.filter((place)=>place.rating>rating);
+          setFilteredPlaces(filteredarr);
+      },[rating])
     useEffect(()=>{
         // setCoords(coords)
+        setIsLoading(true);
             const fetchapi=async ()=>{
-                const data =  await fetchRestuarants(bonds);
+                const data =  await fetchRestuarants(bonds,type);
+                // console.log(data);
+                setFilteredPlaces([]);
                 setRest(data);
-                console.log(data);
+                setIsLoading(false);
             }
-            fetchapi();
+            // fetchapi();
 
-    },[coords,bonds])
+    },[type,coords,bonds])
     return(
         <>
          <CssBaseline/>
          <Header/>
          <Grid container spacing={3} style={{width:"100%"}} >
              <Grid item xs={12} md={4} >
-                 <Lists />
+                 <Lists type={type} setType={setType} rating={rating} setRating={setRating} isLoading={isLoading} childClicked ={childClicked} rest={filteredPlaces.length ? filteredPlaces: rest}/>
              </Grid>
              <Grid item xs={12} md={8}>
-                 <Map coords={coords} setCoords={setCoords} setBounds={setBounds} />
+                 <Map setChildClicked ={setChildClicked} places={filteredPlaces.length ? filteredPlaces :rest}  coords={coords} setCoords={setCoords} setBounds={setBounds} />
              </Grid>
          </Grid>   
         </>

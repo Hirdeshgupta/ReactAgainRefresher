@@ -1,35 +1,27 @@
-import React from 'react'
+import React,{useEffect,createRef} from 'react'
 import {CircularProgress,Grid,Typography,InputLabel,MenuItem,FormControl,Select} from "@material-ui/core";
 import useStyles from "./styles";
 import { useState } from 'react';
 import PlaceDetails from "../PlaceDetails/PlaceDetails"
 
-const Lists = () => {
-const [type,setType]=useState("hotels");
-const [rating,setRating]=useState(0);
-const places=[
-    {name:"Dehli"},
-    {name:"Mumbai"},
-    {name:"Hyderabad"},
-    {name:"Banglore"},
-    {name:"Dehli"},
-    {name:"Mumbai"},
-    {name:"Hyderabad"},
-    {name:"Banglore"},
-    {name:"Dehli"},
-    {name:"Mumbai"},
-    {name:"Hyderabad"},
-    {name:"Banglore"},
-    {name:"Dehli"},
-    {name:"Mumbai"},
-    {name:"Hyderabad"},
-    {name:"Banglore"},
-]
+const Lists = ({rest,childClicked,isLoading,rating,setRating,type,setType}) => {
+
+const [elRefs,setElRefs]=useState([]);
+useEffect(()=>{
+    const refs = Array(rest?.length).fill().map((_,i)=>elRefs[i] || createRef());
+    setElRefs(refs);
+},[rest]);
     const classes = useStyles();
     return (
         <div className={classes.container}>
         <Typography variant ="h4">Hotels , Restaurants and Attractions around you  </Typography> 
-        <FormControl className={classes.formControl} >
+        {isLoading ? (
+            <div className={classes.loading}>
+                <CircularProgress size="5rem"/>
+            </div>
+        ):(
+            <>
+            <FormControl className={classes.formControl} >
             <InputLabel>Type</InputLabel>
             <Select value= {type} onChange={e=>setType(e.target.value)}>
                 <MenuItem value ="restaurants">Restaurants</MenuItem>
@@ -48,11 +40,13 @@ const places=[
             </Select>
         </FormControl>
         <Grid container spacing={2}  className={classes.list}>
-            {places?.map((place,i)=>(
+            {rest?.map((place,i)=>(
             <Grid item  key={i} xs={12}>
-                <PlaceDetails place={place} />
+                <PlaceDetails ref={elRefs[i]} selected={Number(childClicked)===i} place={place} />
             </Grid>))}
-        </Grid>     
+        </Grid>  
+            </>
+        )}   
         </div>
     )
 }

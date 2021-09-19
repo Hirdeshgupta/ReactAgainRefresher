@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React,{useState} from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-
+import { Autocomplete } from '@react-google-maps/api';
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -51,7 +51,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function SearchAppBar() {
+export default function SearchAppBar({setCoords}) {
+  const [autocomplete,setAutocomplete]=useState(null);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -72,6 +73,12 @@ export default function SearchAppBar() {
             Explore 
           </Typography>
           <Search>
+          <Autocomplete  onLoad={(e)=>setAutocomplete(e)} onPlaceChanged={()=>{
+            const lat = autocomplete.getPlace().geometry.location.lat();
+            const lng = autocomplete.getPlace().geometry.location.lng();
+            setCoords({lat,lng});
+          }}>
+            <>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
@@ -79,7 +86,10 @@ export default function SearchAppBar() {
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
             />
+            </>
+            </Autocomplete>
           </Search>
+
         </Toolbar>
       </AppBar>
     </Box>

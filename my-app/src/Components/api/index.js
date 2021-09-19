@@ -13,7 +13,7 @@ export const fetchRestuarants= async({ne,sw},type)=>{
             },
             headers: {
               'x-rapidapi-host': 'travel-advisor.p.rapidapi.com',
-              'x-rapidapi-key': 'd748bf25ccmshd7853f7c3faa2a6p1c942ejsna037f64c4bbe'
+              'x-rapidapi-key': process.env.REACT_APP_RAPID_API
             }
         });
         return res.data.data;
@@ -22,4 +22,27 @@ export const fetchRestuarants= async({ne,sw},type)=>{
     {
         console.log(err)
     }
+}
+export const fetchWeatherData = async({lat,lng})=>{
+  try{
+    if(lat && lng ){
+      const {data} =  await axios.get(`https://community-open-weather-map.p.rapidapi.com/find`,{
+          method: 'GET',
+          url: `https://community-open-weather-map.p.rapidapi.com/find`,
+          params: {
+            lon: lng,
+            lat: lat,
+          },
+          headers: {
+            'x-rapidapi-host': 'community-open-weather-map.p.rapidapi.com',
+            'x-rapidapi-key': process.env.REACT_APP_RAPID_API
+          }
+      });
+      return data;
+    }
+  }
+  catch(err)
+  {
+      console.log(err)
+  }
 }

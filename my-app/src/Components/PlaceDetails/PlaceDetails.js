@@ -1,10 +1,11 @@
 import React from 'react'
-
-const PlaceDetails = () => {
+import useStyles from "./styles";
+const PlaceDetails = ({place}) => {
+    const classes = useStyles();
     return (
-        <div>
-            Map
-        </div>
+        <h2>
+            {place.name}
+        </h2>
     )
 }
 
